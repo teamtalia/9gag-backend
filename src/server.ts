@@ -22,7 +22,7 @@ mongoose.connect(uri, {
 });
 const { connection } = mongoose;
 connection.once('open', () => {
-  console.log('MongoDB base de dados conectada com sucesso.');
+  // console.log('MongoDB base de dados conectada com sucesso.');
 });
 
 app.listen(port, () => {

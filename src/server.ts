@@ -21,7 +21,7 @@ mongoose.connect(uri, {
   useCreateIndex: true,
 });
 const { connection } = mongoose;
-connection.once("open", () => {
+connection.once('open', () => {
   // console.log('MongoDB base de dados conectada com sucesso.');
 });
 

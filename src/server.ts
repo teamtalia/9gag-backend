@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import postsRouter from './routes/posts';
 import usersRouter from './routes/users';
+import imagekitRouter from './routes/imagekit';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.status(200);
 });
+app.use('/imagekit', imagekitRouter);
 app.use('/posts', postsRouter);
 app.use('/users', usersRouter);
 

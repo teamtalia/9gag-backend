@@ -11,11 +11,15 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.6",
+    "imagekit": "^3.1.1",
     "mongoose": "^5.10.14"
   },
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "@types/cors": "^2.8.8",
     "@types/express": "^4.17.6",
+    "@types/imagekit": "^3.1.1",
     "@types/jest": "^26.0.15",
     "@types/mongoose": "^5.10.1",
     "@types/supertest": "^2.0.10",

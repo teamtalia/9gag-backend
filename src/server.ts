@@ -27,7 +27,7 @@ connection.once('open', () => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
+  console.log(`O servidor está rodando na porta: ${port}`);
 });
 app.get('/', (req, res) => {
   res.status(200);

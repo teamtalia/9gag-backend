@@ -32,7 +32,6 @@ router.route('/').get(ensureAuthenticated, async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { password, email, fullname, thirdPartyToken } = req.body;
-
   try {
     let user;
     if (!thirdPartyToken) {
@@ -44,6 +43,7 @@ router.post('/', async (req, res) => {
       });
     } else {
       const createThirdPartyUserService = new ThirdPartyCreateUserService();
+
       user = await createThirdPartyUserService.execute({
         thirdPartyToken,
       });

@@ -22,6 +22,7 @@ class AuthenticateUserService {
   }: Request): Promise<any> {
     const usersRepository = getRepository(User);
     const authenticateThirdPartyServices = new ThirdPartyAuthenticateUserService();
+
     if (thirdPartyToken) {
       try {
         const payload = await verifyToken(thirdPartyToken);

@@ -21,9 +21,14 @@ class ThirdPartyCreateUserService {
     let userEmail = email;
     let userName = name;
     if (thirdPartyToken) {
-      const payload = await verifyToken(thirdPartyToken);
-      userEmail = payload.email;
-      userName = payload.name;
+      try {
+        const payload = await verifyToken(thirdPartyToken);
+
+        userEmail = payload.email;
+        userName = payload.name;
+      } catch (err) {
+        throw new ServiceError(err.message, 500);
+      }
     }
 
     const userExits = await userRepository.findOne({

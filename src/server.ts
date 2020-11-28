@@ -4,7 +4,7 @@ import './database';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import postsRouter from './routes/posts.routes';
+// import postsRouter from './routes/posts.routes';
 import usersRouter from './routes/users.routes';
 import sessionRouter from './routes/session.routes';
 

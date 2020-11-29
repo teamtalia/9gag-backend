@@ -1,8 +1,11 @@
+import dotenv from 'dotenv';
 import {
   createConnection,
   getConnectionOptions,
   ConnectionOptions,
 } from 'typeorm';
+
+dotenv.config();
 
 const getOptions = async () => {
   let connectionOptions: ConnectionOptions;

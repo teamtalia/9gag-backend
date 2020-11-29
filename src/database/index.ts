@@ -15,6 +15,7 @@ const getOptions = async () => {
     logging: false,
     extra: {
       ssl: true,
+      rejectUnauthorized: false,
     },
     entities: ['dist/models/*.*'],
   };

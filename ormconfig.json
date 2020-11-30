@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "url": "postgres://oalyrelfbbzego:4c1c260c9dac82e957fdb541208021ad2766f4403d579d9f38aeaf2f7b7f2498@ec2-52-2-82-109.compute-1.amazonaws.com:5432/d74rh42sje70v6",
+  "entities": [
+    "./src/models/*.ts"
+  ],
+  "migrations": [
+    "./src/database/migrations/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/database/migrations"
+  },
+  "synchronize": false,
+  "ssl": {
+    "rejectUnauthorized": false
+  }
+}

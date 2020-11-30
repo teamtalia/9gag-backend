@@ -2,10 +2,10 @@
 import { getRepository, getManager } from 'typeorm';
 import { hash } from 'bcrypt';
 
-import SendUserEmailVerification from './SendUserEmailVerification';
-import ServiceError from '../util/ServiceError';
-import User from '../models/User';
-import auth from '../config/auth';
+import SendUserEmailVerification from '../auth/SendUserEmailVerification';
+import ServiceError from '../../util/ServiceError';
+import User from '../../models/User';
+import auth from '../../config/auth';
 
 interface Request {
   fullname: string;

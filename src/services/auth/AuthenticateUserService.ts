@@ -2,11 +2,14 @@ import { getRepository } from 'typeorm';
 import { sign, Secret, SignOptions } from 'jsonwebtoken';
 import { promisify } from 'util';
 import { compare } from 'bcrypt';
+
+import TokenPayloadType from '../../contracts/TokenPayloadType';
+import { verifyToken } from '../../config/google';
+import ServiceError from '../../util/ServiceError';
+import authConfig from '../../config/auth';
+import User from '../../models/User';
+
 import ThirdPartyAuthenticateUserService from './ThirdPartyAuthenticateUserService';
-import ServiceError from '../util/ServiceError';
-import authConfig from '../config/auth';
-import { verifyToken } from '../config/google';
-import User from '../models/User';
 
 interface Request {
   email: string;
@@ -44,26 +47,29 @@ class AuthenticateUserService {
       typeof user.password === 'undefined' ||
       !user.password
     ) {
-      throw new ServiceError('thirdPartyToken not provided.', 400);
+      throw new ServiceError(
+        'Accounts created by google are not allowed to sign in using email.',
+        400,
+      );
     }
 
     try {
       const result = await promisify(compare)(password, user.password);
 
       if (result) {
-        const payload = {
+        const payload: TokenPayloadType = {
           user: {
             id: user.id,
+            fullname: user.fullname,
+            email: user.email,
           },
         };
-        const token = await promisify<any, Secret, SignOptions>(sign)(
-          payload,
-          authConfig.secret,
-          {
-            expiresIn: 3600,
-          },
-        );
-        return token;
+        const token = await promisify<TokenPayloadType, Secret, SignOptions>(
+          sign,
+        )(payload, authConfig.secret, {
+          expiresIn: 3600,
+        });
+        return { token, payload };
       }
       throw new ServiceError('Email or password mismatch.', 400);
     } catch (err) {

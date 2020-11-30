@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import authConfig from '../config/auth';
+import TokenPayloadType from '../contracts/TokenPayloadType';
 
 const ensureAuthenticated = (
   req: Request,
@@ -17,7 +18,7 @@ const ensureAuthenticated = (
   }
   try {
     const decoded = jwt.verify(token, authConfig.secret);
-    req.token = decoded;
+    req.token = decoded as TokenPayloadType;
     return next();
   } catch (e) {
     response = { message: 'Invalid token.' };

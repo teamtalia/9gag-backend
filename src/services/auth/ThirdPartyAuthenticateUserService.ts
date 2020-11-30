@@ -3,9 +3,9 @@ import { sign, Secret, SignOptions } from 'jsonwebtoken';
 import { promisify } from 'util';
 
 import ThirdPartyCreateUserService from './ThirdPartyCreateUserService';
-import ServiceError from '../util/ServiceError';
-import authConfig from '../config/auth';
-import User from '../models/User';
+import ServiceError from '../../util/ServiceError';
+import authConfig from '../../config/auth';
+import User from '../../models/User';
 
 interface Request {
   email: string;
@@ -27,6 +27,8 @@ class ThirdPartyAuthenticateUserService {
       const payload = {
         user: {
           id: user.id,
+          fullname: user.fullname,
+          email: user.email,
         },
       };
       const token = await promisify<any, Secret, SignOptions>(sign)(
@@ -36,7 +38,7 @@ class ThirdPartyAuthenticateUserService {
           expiresIn: 3600,
         },
       );
-      return token;
+      return { token, payload };
     } catch (err) {
       throw new ServiceError(err, 500);
     }

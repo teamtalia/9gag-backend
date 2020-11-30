@@ -1,8 +1,8 @@
 import { SendMailOptions } from 'nodemailer';
-import mailer from '../config/mailer';
+import mailer from '../../config/mailer';
 
-import ServiceError from '../util/ServiceError';
-import User from '../models/User';
+import ServiceError from '../../util/ServiceError';
+import User from '../../models/User';
 
 interface Request {
   user: User;

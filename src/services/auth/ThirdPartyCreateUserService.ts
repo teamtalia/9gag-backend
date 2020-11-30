@@ -1,9 +1,8 @@
 /* eslint-disable no-await-in-loop */
-import { getRepository, getManager, Repository } from 'typeorm';
-import SendUserEmailVerification from './SendUserEmailVerification';
-import ServiceError from '../util/ServiceError';
-import User from '../models/User';
-import { verifyToken } from '../config/google';
+import { getRepository } from 'typeorm';
+import ServiceError from '../../util/ServiceError';
+import User from '../../models/User';
+import { verifyToken } from '../../config/google';
 
 interface Request {
   name?: string;

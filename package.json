@@ -65,14 +65,14 @@
   },
   "scripts": {
     "server": "ts-node-dev src/server.ts --inspect --transpileOnly",
-    "build": "tsc && yarn postbuild",
+    "build": "tsc",
     "test:unit": "ENV_FILE=./.env.test jest",
     "test": "ENV_FILE=./.env.test jest --watch",
     "coverage": "jest --coverage",
     "commit": "git-cz",
     "lint": "eslint src --ext ts,tsx",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "postbuild": "copyfiles ./src/mails/* dist/"
+    "postbuild": "copyfiles ./src/mails/* ./dist/mails -f"
   },
   "repository": {
     "type": "git",

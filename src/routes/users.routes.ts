@@ -4,9 +4,11 @@ import { getRepository } from 'typeorm';
 import { trim } from '../util/Object';
 import User from '../models/User';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
-import CreateUserService from '../services/CreateUserService';
-import UserVerficationService from '../services/UserVerficationService';
-import ThirdPartyCreateUserService from '../services/ThirdPartyCreateUserService';
+import CreateUserService from '../services/user/CreateUserService';
+import CreatePasswordResetService from '../services/user/CreatePasswordResetService';
+import UserVerficationService from '../services/user/UserVerficationService';
+import ThirdPartyCreateUserService from '../services/auth/ThirdPartyCreateUserService';
+import ResetUserPasswordService from '../services/user/ResetUserPasswordService';
 
 const router = Router();
 
@@ -76,6 +78,44 @@ router.get('/verification/:code', async (req, res) => {
         password: undefined, // #remove sensitive info
       }),
     );
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
+router.post('/password/reset', async (req, res) => {
+  const { email } = req.body;
+  const createPasswordResetService = new CreatePasswordResetService();
+  try {
+    await createPasswordResetService.execute({
+      email,
+    });
+    return res.status(200).json({
+      message:
+        'An email has been sent to you with instructions to reset your password.',
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
+router.put('/password/reset', async (req, res) => {
+  const { code, password, passwordConfirm } = req.body;
+  const resetUserPasswordService = new ResetUserPasswordService();
+  try {
+    await resetUserPasswordService.execute({
+      code,
+      password,
+      passwordConfirm,
+    });
+    return res.status(200).json({
+      message:
+        'Your password has been reset, login with the new password and have a nice day.',
+    });
   } catch (err) {
     return res.status(err.status).json({
       message: err.message,

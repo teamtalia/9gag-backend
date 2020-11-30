@@ -1,7 +1,7 @@
 import { getRepository } from 'typeorm';
 
-import User from '../models/User';
-import ServiceError from '../util/ServiceError';
+import User from '../../models/User';
+import ServiceError from '../../util/ServiceError';
 
 interface Props {
   code: string;

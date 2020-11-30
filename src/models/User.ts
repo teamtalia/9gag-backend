@@ -3,7 +3,9 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import PasswordReset from './PasswordReset';
 
 @Entity('users')
 class User {
@@ -33,6 +35,9 @@ class User {
 
   @CreateDateColumn({ name: 'verified_at' })
   verifiedAt: Date;
+
+  @OneToMany(() => PasswordReset, passwordReset => passwordReset.user)
+  passwordResets: PasswordReset[];
 }
 
 export default User;

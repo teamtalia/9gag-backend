@@ -1,11 +1,11 @@
 declare namespace Express {
   export interface Request {
-    token: any;
-  }
-}
-
-declare namespace Mail {
-  export interface SendMailOptions {
-    template: string;
+    token: {
+      user: {
+        id: string;
+        fullname: string;
+        email: string;
+      };
+    };
   }
 }

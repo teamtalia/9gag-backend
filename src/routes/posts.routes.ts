@@ -1,41 +1,54 @@
 import { Router } from 'express';
-import s3 from '../middleware/s3';
-import Post from '../models/post.model';
+import bodyParser from 'body-parser';
+
+import { getRepository } from 'typeorm';
+import ensureAuthenticated from '../middleware/ensureAuthenticated';
+import CreatePostService from '../services/posts/CreatePostService';
+import User from '../models/User';
 
 const router = Router();
 
-router.route('/').get((req, res) => {
-  Post.find()
-    .then(post => res.json(post))
-    .catch(err => res.status(400).json(`Error: ${err}`));
+router.use(bodyParser.urlencoded({ extended: true }));
+
+router.get('/', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  // criar o serviço de buscar posts posteriormente (feed)
+  // precisa tambem filtrar a respostas pra não retornar informações sensiveis
+  const userRepository = getRepository(User);
+  const user = await userRepository.findOne({
+    where: { id },
+    relations: ['posts', 'posts.file', 'posts.tags'], // eager relations + nested relations ❤️
+  });
+  return res.json({
+    posts: user.posts,
+  });
 });
 
-router.route('/').post(s3().single('file'), (req, res) => {
-  // console.log('req');
-  // const { username } = req.body;
-  // const { title } = req.body;
-  // const { category } = req.body;
-  // // const { url } = req.body;
-  // const date = Date.parse(req.body.date);
-  // const points = Number(req.body.points);
-  // const upvote = Number(req.body.upvote);
-  // const downvote = Number(req.body.downvote);
-  // const url = 'batatinha';
-  // const newPost = new Post({
-  //   username,
-  //   title,
-  //   category,
-  //   url,
-  //   date,
-  //   points,
-  //   upvote,
-  //   downvote,
-  // });
-  // newPost
-  //   .save()
-  //   .then(() => res.json('Post added!'))
-  //   .catch(err => res.status(400).json(`Error: ${err}`));
-  res.sendStatus(200);
+router.post('/', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  const { tags, sensitive, originalPoster, file } = req.body;
+  // a parte de upvote/downvote e etc e criado em outro contexto...
+  const createPostService = new CreatePostService();
+  try {
+    const post = await createPostService.execute({
+      file,
+      originalPoster,
+      userId: id,
+      sensitive,
+      tags,
+    });
+    return res.status(201).json({
+      id: post.id,
+      file: post.file.location,
+      sensitive,
+      tags: post.tags,
+      originalPoster,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
 });
 
 export default router;

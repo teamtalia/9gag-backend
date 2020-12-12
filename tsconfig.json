@@ -65,12 +65,12 @@
     "mocks/**"
   ],
   "files": [
-    "./src/type.d.ts"
+    "src/type.d.ts"
   ],
   "ts-node": {
     "files": true
   },
   "include": [
-    "./src/*"
+    "./src/*",
   ]
 }

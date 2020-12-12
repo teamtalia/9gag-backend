@@ -6,6 +6,8 @@ import {
   OneToMany,
 } from 'typeorm';
 import PasswordReset from './PasswordReset';
+import File from './File';
+import Post from './Post';
 
 @Entity('users')
 class User {
@@ -38,6 +40,12 @@ class User {
 
   @OneToMany(() => PasswordReset, passwordReset => passwordReset.user)
   passwordResets: PasswordReset[];
+
+  @OneToMany(() => File, file => file.user)
+  files: File[];
+
+  @OneToMany(() => Post, post => post.user)
+  posts: Post[];
 }
 
 export default User;

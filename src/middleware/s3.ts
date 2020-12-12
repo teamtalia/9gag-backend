@@ -1,16 +1,10 @@
 import multer from 'multer';
-import aws from 'aws-sdk';
 import multerS3 from 'multer-s3';
 import { uuid } from 'uuidv4';
 
-const MAX_SIZE_TWO_MEGABYTES = 2 * 1024 * 1024;
+import { S3, AwsBucket } from '../config/s3';
 
-const S3 = new aws.S3({
-  accessKeyId: process.env.S3_KEY_ID,
-  secretAccessKey: process.env.ACCESS_KEY,
-});
-
-const AwsBucket = 'taliaapp.co';
+// const MAX_SIZE_TWO_MEGABYTES = 2 * 1024 * 1024;
 
 const s3 = (options: any = {}) =>
   multer({

@@ -40,8 +40,7 @@ class CreateFileService {
         updatedAt,
         user: userExits,
       });
-      const f = await filesRepository.save(fileData);
-      return f;
+      return await filesRepository.save(fileData);
     } catch (err) {
       // script usando sdk da amazon pra deletar o arquivo caso tenha algum erro
       // na hora de inserir no banco de dados

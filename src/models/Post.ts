@@ -23,6 +23,9 @@ class Post {
   @Column()
   sensitive: boolean;
 
+  @Column()
+  description: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

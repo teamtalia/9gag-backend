@@ -11,6 +11,7 @@ interface Request {
   originalPoster: string;
   file: string;
   userId: string;
+  description?: string;
 }
 
 class CreatePostService {
@@ -20,6 +21,7 @@ class CreatePostService {
     sensitive,
     originalPoster,
     file,
+    description,
   }: Request): Promise<Post> {
     const userRepository = getRepository(User);
     const filesRepository = getRepository(File);
@@ -68,8 +70,13 @@ class CreatePostService {
         sensitive,
         user: userExits,
         file: fileExits,
+        description,
       });
-      return await postsRepository.save(postData);
+      const post = await postsRepository.save(postData);
+      return await postsRepository.findOne({
+        where: { id: post.id },
+        relations: ['file', 'tags'],
+      });
     } catch (err) {
       throw new ServiceError(`error on create post: ${err}`);
     }

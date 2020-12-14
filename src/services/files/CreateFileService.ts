@@ -22,11 +22,11 @@ class CreateFileService {
     const userRepository = getRepository(User);
     const filesRepository = getRepository(File);
 
-    const userExits = await userRepository.findOne({
+    const userExists = await userRepository.findOne({
       where: { id: userId },
     });
 
-    if (!userExits) {
+    if (!userExists) {
       throw new ServiceError('Invalid User.', 400);
     }
 
@@ -38,7 +38,7 @@ class CreateFileService {
         ...file,
         createdAt,
         updatedAt,
-        user: userExits,
+        user: userExists,
       });
       return await filesRepository.save(fileData);
     } catch (err) {

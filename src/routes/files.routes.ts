@@ -1,5 +1,6 @@
 import { Router } from 'express';
-
+import { getRepository } from 'typeorm';
+import File from '../models/File';
 import s3 from '../middleware/s3';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreateFileService, {
@@ -8,9 +9,11 @@ import CreateFileService, {
 
 const router = Router();
 
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated, async (req, res) => {
   const { id } = req.token.user;
-  // implement get list of files
+  const fileRepository = getRepository(File);
+  const files = await fileRepository.find();
+  return res.status(201).json(files);
 });
 
 router.post('/', ensureAuthenticated, s3().single('file'), async (req, res) => {

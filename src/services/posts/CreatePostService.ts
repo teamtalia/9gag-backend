@@ -4,6 +4,7 @@ import User from '../../models/User';
 import File from '../../models/File';
 import Tag from '../../models/Tag';
 import Post from '../../models/Post';
+import { S3, AwsBucket } from '../../config/s3';
 
 interface Request {
   tags: string[];
@@ -26,38 +27,58 @@ class CreatePostService {
     const tagsRepository = getRepository(Tag);
     const postsRepository = getRepository(Post);
 
-    const userExits = await userRepository.findOne({
+    const userExists = await userRepository.findOne({
       where: { id: userId },
     });
 
-    if (!userExits) {
+    if (!userExists) {
       throw new ServiceError('Invalid User.', 400);
     }
 
-    const fileExits = await filesRepository.findOne({
+    const fileExists = await filesRepository.findOne({
       where: { id: file },
     });
 
-    if (!fileExits) {
+    if (!fileExists) {
       throw new ServiceError('Invalid File Id.', 400);
     }
     const tagsToInsert = await Promise.all(
       tags.map(async tag => {
-        const tagExits = await tagsRepository.findOne({ where: { name: tag } });
-        if (!tagExits) {
+        const tagExists = await tagsRepository.findOne({
+          where: { name: tag },
+        });
+        if (!tagExists) {
           throw new ServiceError(`Invalid Tag: ${tag}.`, 400);
         }
-        return tagExits;
+        return tagExists;
       }),
     );
 
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    // falta
-    // abrir uma transação:
-    // modificar o local do file
-    // salvar e depois criar o post
+    try{
+      S3.copyObject({
+      Bucket: AwsBucket,
+      CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
+      Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
+    }).promise();
+
+    S3.deleteObject({
+      Bucket: AwsBucket,
+      Key: fileExists.key,
+    }).promise();    
+    } catch (err){
+      throw new ServiceError(`error on moving the file in the amazon bucket: ${err}`);
+    }    
+    try{
+      filesRepository.save({
+      id: fileExists.id,
+      key: fileExists.key.replace('tmp/', ''),
+    });
+    } catch (err) {
+      throw new ServiceError(`error on updating the file key in the database: ${err}`);
+    }
 
     try {
       const postData = postsRepository.create({
@@ -66,8 +87,8 @@ class CreatePostService {
         updatedAt,
         originalPoster,
         sensitive,
-        user: userExits,
-        file: fileExits,
+        user: userExists,
+        file: fileExists,
       });
       return await postsRepository.save(postData);
     } catch (err) {

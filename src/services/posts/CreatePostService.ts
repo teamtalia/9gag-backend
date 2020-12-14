@@ -64,6 +64,7 @@ class CreatePostService {
         Bucket: AwsBucket,
         CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
         Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
+        ACL: 'public-read',
       }).promise();
 
       S3.deleteObject({
@@ -79,6 +80,7 @@ class CreatePostService {
       filesRepository.save({
         id: fileExists.id,
         key: fileExists.key.replace('tmp/', ''),
+        location: fileExists.location.replace('tmp/', ''),
       });
     } catch (err) {
       throw new ServiceError(

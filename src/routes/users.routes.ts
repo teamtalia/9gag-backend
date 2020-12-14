@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-
 import { trim } from '../util/Object';
 import User from '../models/User';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';

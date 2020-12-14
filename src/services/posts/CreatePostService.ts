@@ -12,6 +12,7 @@ interface Request {
   originalPoster: string;
   file: string;
   userId: string;
+  description?: string;
 }
 
 class CreatePostService {
@@ -21,6 +22,7 @@ class CreatePostService {
     sensitive,
     originalPoster,
     file,
+    description,
   }: Request): Promise<Post> {
     const userRepository = getRepository(User);
     const filesRepository = getRepository(File);
@@ -57,27 +59,31 @@ class CreatePostService {
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    try{
+    try {
       S3.copyObject({
-      Bucket: AwsBucket,
-      CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
-      Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
-    }).promise();
+        Bucket: AwsBucket,
+        CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
+        Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
+      }).promise();
 
-    S3.deleteObject({
-      Bucket: AwsBucket,
-      Key: fileExists.key,
-    }).promise();    
-    } catch (err){
-      throw new ServiceError(`error on moving the file in the amazon bucket: ${err}`);
-    }    
-    try{
-      filesRepository.save({
-      id: fileExists.id,
-      key: fileExists.key.replace('tmp/', ''),
-    });
+      S3.deleteObject({
+        Bucket: AwsBucket,
+        Key: fileExists.key,
+      }).promise();
     } catch (err) {
-      throw new ServiceError(`error on updating the file key in the database: ${err}`);
+      throw new ServiceError(
+        `error on moving the file in the amazon bucket: ${err}`,
+      );
+    }
+    try {
+      filesRepository.save({
+        id: fileExists.id,
+        key: fileExists.key.replace('tmp/', ''),
+      });
+    } catch (err) {
+      throw new ServiceError(
+        `error on updating the file key in the database: ${err}`,
+      );
     }
 
     try {
@@ -89,8 +95,13 @@ class CreatePostService {
         sensitive,
         user: userExists,
         file: fileExists,
+        description,
       });
-      return await postsRepository.save(postData);
+      const post = await postsRepository.save(postData);
+      return await postsRepository.findOne({
+        where: { id: post.id },
+        relations: ['file', 'tags'],
+      });
     } catch (err) {
       throw new ServiceError(`error on create post: ${err}`);
     }

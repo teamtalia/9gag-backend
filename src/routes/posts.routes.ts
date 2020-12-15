@@ -12,6 +12,7 @@ const router = Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', async (req, res) => {
+  // comentário
   // criar o serviço de buscar posts posteriormente (feed)
   // precisa tambem filtrar a respostas pra não retornar informações sensiveis
   // const userRepository = getRepository(User);

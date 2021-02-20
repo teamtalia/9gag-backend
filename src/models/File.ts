@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import User from './User';
 import Tag from './Tag';
 import Post from './Post';
+import FileResource from './FileResource';
 
 @Entity('files')
 class File {
@@ -47,6 +49,13 @@ class File {
 
   @OneToMany(() => Post, post => post.file)
   posts: Post[];
+
+  @OneToMany(() => FileResource, source => source.file)
+  sources: FileResource[];
+
+  @OneToMany(() => User, user => user.avatar)
+  @JoinColumn({ name: 'id', referencedColumnName: 'avatar' })
+  avatar: User[];
 }
 
 export default File;

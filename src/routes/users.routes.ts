@@ -32,7 +32,7 @@ router.route('/').get(ensureAuthenticated, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { password, email, fullname, thirdPartyToken } = req.body;
+  const { password, email, fullname, thirdPartyToken, avatar } = req.body;
   try {
     let user;
     if (!thirdPartyToken) {
@@ -41,12 +41,14 @@ router.post('/', async (req, res) => {
         fullname,
         email,
         password,
+        fileId: avatar,
       });
     } else {
       const createThirdPartyUserService = new ThirdPartyCreateUserService();
 
       user = await createThirdPartyUserService.execute({
         thirdPartyToken,
+        // fileId: avatar,
       });
     }
 
@@ -58,6 +60,7 @@ router.post('/', async (req, res) => {
       }),
     );
   } catch (err) {
+    console.log('error', err);
     return res.status(err.status).json({
       message: err.message,
     });

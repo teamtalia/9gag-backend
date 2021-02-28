@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
   // criar o serviço de buscar posts posteriormente (feed)
   // precisa tambem filtrar a respostas pra não retornar informações sensiveis
   // const userRepository = getRepository(User);
+
   const postRepository = getRepository(Post);
   // const user = await userRepository.findOne({
   //   where: { id },
@@ -52,6 +53,20 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
       message: err.message,
     });
   }
+});
+
+  router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const postRepository = getRepository(Post);
+  const post = await postRepository.findOne({
+    where: { id },
+    relations: ['file', 'tags'],
+  });
+  if (post) return res.json(post);
+  return res.status(400).json({
+    message: 'Invalid id.',
+  });
+
 });
 
 router.post('/', ensureAuthenticated, async (req, res) => {

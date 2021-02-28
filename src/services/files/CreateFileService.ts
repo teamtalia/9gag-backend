@@ -1,4 +1,6 @@
+/* eslint-disable no-restricted-syntax */
 import { getRepository } from 'typeorm';
+// import { spawn } from 'child_process';
 import ServiceError from '../../util/ServiceError';
 import User from '../../models/User';
 import File from '../../models/File';
@@ -29,6 +31,11 @@ class CreateFileService {
     if (!userExists) {
       throw new ServiceError('Invalid User.', 400);
     }
+    // const child = spawn('mediainfo', [file.location]);
+
+    // for await (const data of child.stdout) {
+    //   const payload = Buffer.from(data).toString('utf-8');
+    // }
 
     const createdAt = new Date();
     const updatedAt = new Date();

@@ -5,10 +5,16 @@ import {
   CreateDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
+  BeforeRemove,
 } from 'typeorm';
 import User from './User';
 import Tag from './Tag';
 import Post from './Post';
+import Comment from './Comment';
+import FileResource from './FileResource';
+import { S3, AwsBucket } from '../config/s3';
+import ServiceError from '../util/ServiceError';
 
 @Entity('files')
 class File {
@@ -47,6 +53,32 @@ class File {
 
   @OneToMany(() => Post, post => post.file)
   posts: Post[];
+
+  @OneToMany(() => Comment, comment => comment.file)
+  comments: Comment[];
+
+  @OneToMany(() => FileResource, source => source.file)
+  sources: FileResource[];
+
+  @OneToMany(() => User, user => user.avatar)
+  @JoinColumn({ name: 'id', referencedColumnName: 'avatar' })
+  avatar: User[];
+
+  @BeforeRemove()
+  async updateAWS(): Promise<void> {
+    try {
+      await S3.deleteObject({
+        Bucket: AwsBucket,
+        Key: this.key,
+      }).promise();
+      console.log('deu bom');
+    } catch (err) {
+      console.log(err);
+      throw new ServiceError(
+        `error on moving the file in the amazon bucket: ${err}`,
+      );
+    }
+  }
 }
 
 export default File;

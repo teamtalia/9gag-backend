@@ -17,6 +17,9 @@ const s3 = (options: any = {}) =>
       },
       ...options,
     }),
+    limits: {
+      fileSize: 1024 * 1024 * 25, // max 25mb upload
+    },
   });
 
 export default s3;

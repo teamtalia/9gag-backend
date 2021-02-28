@@ -67,7 +67,7 @@ class AuthenticateUserService {
         const token = await promisify<TokenPayloadType, Secret, SignOptions>(
           sign,
         )(payload, authConfig.secret, {
-          expiresIn: 3600,
+          expiresIn: 36000, // voltar ao tempo normal
         });
         return { token, payload };
       }

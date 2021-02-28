@@ -6,11 +6,12 @@ import {
   ManyToOne,
   JoinTable,
   ManyToMany,
-  // OneToMany,
+  OneToMany,
 } from 'typeorm';
 import User from './User';
 import File from './File';
 import Tag from './Tag';
+import Comment from './Comment';
 
 @Entity('posts')
 class Post {
@@ -37,6 +38,9 @@ class Post {
 
   @ManyToOne(() => File, file => file.posts)
   file: File;
+
+  @OneToMany(() => Comment, comment => comment.post)
+  comments: Comment[];
 
   @ManyToMany(() => Tag)
   @JoinTable({

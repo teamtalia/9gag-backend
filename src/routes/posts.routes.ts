@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
   // precisa tambem filtrar a respostas pra não retornar informações sensiveis
   // const userRepository = getRepository(User);
 
-  console.log('getiando os posts');
   const postRepository = getRepository(Post);
   // const user = await userRepository.findOne({
   //   where: { id },

@@ -3,13 +3,13 @@ import { getRepository } from 'typeorm';
 
 import File from '../models/File';
 import s3 from '../middleware/s3';
-import beforeUpload from '../middleware/beforeUpload';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreateFileService, {
   FileProps,
 } from '../services/files/CreateFileService';
 
 import UploadExternalFileService from '../services/files/UploadExternalFileService';
+import RemoveFileService from '../services/files/RemoveFileService';
 
 const router = Router();
 
@@ -45,6 +45,25 @@ router.post(
     }
   },
 );
+
+router.delete('/:fileId', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  const { fileId } = req.params;
+  const removeFileService = new RemoveFileService();
+  try {
+    await removeFileService.execute({
+      userId: id,
+      fileId,
+    });
+    return res.status(200).json({
+      ok: true,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
 
 router.post('/external', ensureAuthenticated, async (req, res) => {
   const { url } = req.body;

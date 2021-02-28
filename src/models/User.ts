@@ -7,9 +7,12 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+
 import PasswordReset from './PasswordReset';
 import File from './File';
 import Post from './Post';
+import Comment from './Comment';
+import UserComment from './UserComment';
 
 @Entity('users')
 class User {
@@ -48,6 +51,12 @@ class User {
 
   @OneToMany(() => Post, post => post.user)
   posts: Post[];
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comments: Comment[];
+
+  @OneToMany(() => UserComment, userComment => userComment.user)
+  metaComments: UserComment[];
 
   @ManyToOne(() => File, file => file.avatar)
   @JoinColumn({ name: 'avatar', referencedColumnName: 'id' })

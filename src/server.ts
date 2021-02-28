@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
     .status(200)
     .json({ message: 'welcome to talia api, check the documentation.' });
 });
+
 // need rewrite
 app.use('/posts', postsRouter);
 app.use('/users', usersRouter);

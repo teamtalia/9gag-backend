@@ -2,10 +2,13 @@ import { Router } from 'express';
 import bodyParser from 'body-parser';
 
 import { getRepository } from 'typeorm';
+import { TokenExpiredError } from 'jsonwebtoken';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreatePostService from '../services/posts/CreatePostService';
+import InteractPostService from '../services/posts/InteractPostService';
 // import User from '../models/User';
 import Post from '../models/Post';
+import User from '../models/User';
 
 const router = Router();
 
@@ -27,6 +30,28 @@ router.get('/', async (req, res) => {
   return res.json({
     posts,
   });
+});
+
+router.post('/vote', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  const { postId, vote } = req.body;
+  const createUserPostService = new InteractPostService();
+  try {
+    const postUser = await createUserPostService.execute({
+      postId,
+      userId: id,
+      vote,
+    });
+    return res.status(201).json({
+      id: postUser.id,
+      post: postUser.post.id,
+      voted: vote,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
 });
 
 router.post('/', ensureAuthenticated, async (req, res) => {

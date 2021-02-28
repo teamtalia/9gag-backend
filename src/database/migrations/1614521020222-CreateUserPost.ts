@@ -7,7 +7,7 @@ import {
 
 export class CreateUserPost1614521020222 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createTable(
+    /* await queryRunner.createTable(
       new Table({
         name: 'post_votes',
         columns: [
@@ -56,12 +56,12 @@ export class CreateUserPost1614521020222 implements MigrationInterface {
         referencedTableName: 'posts',
         onDelete: 'CASCADE',
       }),
-    );
+    ); */
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('post_votes', 'fk_join_posts_votes_post');
+    /* await queryRunner.dropForeignKey('post_votes', 'fk_join_posts_votes_post');
     await queryRunner.dropForeignKey('post_votes', 'fk_join_posts_votes_vote');
-    await queryRunner.dropTable('post_votes');
+    await queryRunner.dropTable('post_votes'); */
   }
 }

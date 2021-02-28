@@ -10,6 +10,7 @@ import usersRouter from './routes/users.routes';
 import sessionRouter from './routes/session.routes';
 import filesRouter from './routes/files.routes';
 import tagsRouter from './routes/tags.routes';
+import categoriesRouter from './routes/categories.routes';
 
 dotenv.config();
 
@@ -37,5 +38,6 @@ app.use('/users', usersRouter);
 app.use('/session', sessionRouter);
 app.use('/files', filesRouter);
 app.use('/tags', tagsRouter);
+app.use('/categories', categoriesRouter);
 
 export default app;

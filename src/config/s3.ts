@@ -5,4 +5,5 @@ export const S3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-export const AwsBucket = 'taliaapp.co';
+export const AwsBucket =
+  process.env.NODE_ENV === 'production' ? 'taliaapp.co' : 'test.taliaapp.co';

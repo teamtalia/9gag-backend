@@ -10,10 +10,11 @@ import User from '../../models/User';
 interface Request {
   email: string;
   name: string;
+  picture?: string;
 }
 
 class ThirdPartyAuthenticateUserService {
-  public async execute({ email, name }: Request): Promise<any> {
+  public async execute({ email, name, picture }: Request): Promise<any> {
     const usersRepository = getRepository(User);
     let user = await usersRepository.findOne({
       where: { email },
@@ -21,7 +22,7 @@ class ThirdPartyAuthenticateUserService {
 
     if (!user) {
       const thirdPartyCreateService = new ThirdPartyCreateUserService();
-      user = await thirdPartyCreateService.execute({ name, email });
+      user = await thirdPartyCreateService.execute({ name, email, picture });
     }
     try {
       const payload = {

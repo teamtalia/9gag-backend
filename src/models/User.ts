@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import PasswordReset from './PasswordReset';
 import File from './File';
@@ -46,6 +48,10 @@ class User {
 
   @OneToMany(() => Post, post => post.user)
   posts: Post[];
+
+  @ManyToOne(() => File, file => file.avatar)
+  @JoinColumn({ name: 'avatar', referencedColumnName: 'id' })
+  avatar: File;
 }
 
 export default User;

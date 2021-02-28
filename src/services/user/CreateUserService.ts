@@ -6,12 +6,14 @@ import SendUserEmailVerification from '../auth/SendUserEmailVerification';
 import ServiceError from '../../util/ServiceError';
 import User from '../../models/User';
 import auth from '../../config/auth';
+import File from '../../models/File';
 
 interface Request {
   fullname: string;
   age?: number;
   email: string;
   password: string;
+  fileId?: string;
 }
 
 class CreateUserService {
@@ -20,8 +22,10 @@ class CreateUserService {
     age,
     email,
     password,
+    fileId,
   }: Request): Promise<User> {
     const userRepository = getRepository(User);
+    const fileRepository = getRepository(File);
     const verificationService = new SendUserEmailVerification();
 
     const userExits = await userRepository.findOne({
@@ -29,6 +33,15 @@ class CreateUserService {
     });
     if (userExits) {
       throw new ServiceError('Email already registered.', 400);
+    }
+
+    let avatar = null;
+    if (fileId) {
+      console.log('ue brother');
+      avatar = await fileRepository.findOne({ where: { id: fileId } });
+      if (!avatar) {
+        throw new ServiceError('Invalid File id', 400);
+      }
     }
 
     const createdAt = new Date();
@@ -48,17 +61,17 @@ class CreateUserService {
       }
     } while (true);
 
-    // await sendUserVerificationService.execute({ user });
-    const userData = userRepository.create({
-      fullname,
-      age,
-      email,
-      password: hashedPassword,
-      createdAt,
-      updatedAt,
-      verificationCode,
-    });
     try {
+      const userData = userRepository.create({
+        fullname,
+        age,
+        email,
+        password: hashedPassword,
+        createdAt,
+        updatedAt,
+        verificationCode,
+        avatar,
+      });
       return (await getManager().transaction(
         async transactionalEntityManager => {
           const user = await transactionalEntityManager.save(userData);

@@ -7,6 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import File from './File';
+import Category from './Category';
 
 @Entity('tags')
 class Tag {
@@ -28,6 +29,9 @@ class Tag {
   @ManyToOne(() => File, file => file.tags)
   @JoinColumn({ name: 'icon' })
   icon: File;
+
+  @ManyToOne(() => Category, category => category.tags)
+  category: Category;
 }
 
 export default Tag;

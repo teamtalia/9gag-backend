@@ -10,6 +10,7 @@ import CreateFileService, {
 } from '../services/files/CreateFileService';
 
 import UploadExternalFileService from '../services/files/UploadExternalFileService';
+import RemoveFileService from '../services/files/RemoveFileService';
 
 const router = Router();
 
@@ -45,6 +46,25 @@ router.post(
     }
   },
 );
+
+router.delete('/:fileId', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  const { fileId } = req.params;
+  const removeFileService = new RemoveFileService();
+  try {
+    await removeFileService.execute({
+      userId: id,
+      fileId,
+    });
+    return res.status(200).json({
+      ok: true,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
 
 router.post('/external', ensureAuthenticated, async (req, res) => {
   const { url } = req.body;

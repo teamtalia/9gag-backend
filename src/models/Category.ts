@@ -8,7 +8,7 @@ import {
 
 import Tag from './Tag';
 
-@Entity('category')
+@Entity('categories')
 class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -10,7 +10,7 @@ export class AddColumnTags1613948037094 implements MigrationInterface {
     await queryRunner.addColumn(
       'tags',
       new TableColumn({
-        name: 'tagId',
+        name: 'categoryId',
         type: 'varchar',
         isNullable: false,
       }),
@@ -20,9 +20,9 @@ export class AddColumnTags1613948037094 implements MigrationInterface {
       'tags',
       new TableForeignKey({
         name: 'fk_tag_category',
-        columnNames: ['tagId'],
+        columnNames: ['categoryId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'tags',
+        referencedTableName: 'categories',
         onDelete: 'CASCADE',
       }),
     );
@@ -30,6 +30,6 @@ export class AddColumnTags1613948037094 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey('tags', 'fk_tag_category');
-    await queryRunner.dropColumn('tags', 'tagId');
+    await queryRunner.dropColumn('tags', 'categoryId');
   }
 }

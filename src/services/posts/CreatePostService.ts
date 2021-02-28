@@ -1,10 +1,12 @@
 import { getRepository } from 'typeorm';
+
 import ServiceError from '../../util/ServiceError';
+import PostFileUploadService from '../files/PostFileUploadService';
 import User from '../../models/User';
 import File from '../../models/File';
 import Tag from '../../models/Tag';
 import Post from '../../models/Post';
-import { S3, AwsBucket } from '../../config/s3';
+// import { S3, AwsBucket } from '../../config/s3';
 
 interface Request {
   tags: string[];
@@ -28,6 +30,8 @@ class CreatePostService {
     const filesRepository = getRepository(File);
     const tagsRepository = getRepository(Tag);
     const postsRepository = getRepository(Post);
+
+    const postFileUploadService = new PostFileUploadService();
 
     const userExists = await userRepository.findOne({
       where: { id: userId },
@@ -59,36 +63,37 @@ class CreatePostService {
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    try {
-      await S3.copyObject({
-        Bucket: AwsBucket,
-        CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
-        Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
-        ACL: 'public-read',
-      }).promise();
+    // try {
+    //   await S3.copyObject({
+    //     Bucket: AwsBucket,
+    //     CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
+    //     Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
+    //     ACL: 'public-read',
+    //   }).promise();
 
-      await S3.deleteObject({
-        Bucket: AwsBucket,
-        Key: fileExists.key,
-      }).promise();
-    } catch (err) {
-      throw new ServiceError(
-        `error on moving the file in the amazon bucket: ${err}`,
-      );
-    }
-    try {
-      filesRepository.save({
-        id: fileExists.id,
-        key: fileExists.key.replace('tmp/', ''),
-        location: fileExists.location.replace('tmp/', ''),
-      });
-    } catch (err) {
-      throw new ServiceError(
-        `error on updating the file key in the database: ${err}`,
-      );
-    }
+    //   await S3.deleteObject({
+    //     Bucket: AwsBucket,
+    //     Key: fileExists.key,
+    //   }).promise();
+    // } catch (err) {
+    //   throw new ServiceError(
+    //     `error on moving the file in the amazon bucket: ${err}`,
+    //   );
+    // }
+    // try {
+    //   filesRepository.save({
+    //     id: fileExists.id,
+    //     key: fileExists.key.replace('tmp/', ''),
+    //     location: fileExists.location.replace('tmp/', ''),
+    //   });
+    // } catch (err) {
+    //   throw new ServiceError(
+    //     `error on updating the file key in the database: ${err}`,
+    //   );
+    // }
 
     try {
+      await postFileUploadService.execute({ file: fileExists });
       const postData = postsRepository.create({
         tags: tagsToInsert,
         createdAt,

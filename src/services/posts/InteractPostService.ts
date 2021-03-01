@@ -49,8 +49,6 @@ class InteractPostService {
         });
         const userPost2 = await userPostRepository.save(userPostData);
         return userPost2;
-
-        throw new ServiceError(`error on retrive new tag from database.`);
       } catch (err) {
         throw new ServiceError(`error on create tag: ${err}`);
       }

@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 
 import File from '../models/File';
 import s3 from '../middleware/s3';
+import beforeUpload from '../middleware/beforeUpload';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreateFileService, {
   FileProps,

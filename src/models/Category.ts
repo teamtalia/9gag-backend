@@ -3,14 +3,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
+  OneToMany,
 } from 'typeorm';
-import File from './File';
-import Category from './Category';
 
-@Entity('tags')
-class Tag {
+import Tag from './Tag';
+
+@Entity('categories')
+class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -26,12 +25,8 @@ class Tag {
   @CreateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne(() => File, file => file.tags)
-  @JoinColumn({ name: 'icon' })
-  icon: File;
-
-  @ManyToOne(() => Category, category => category.tags)
-  category: Category;
+  @OneToMany(() => Tag, tag => tag.category)
+  tags: Tag[];
 }
 
-export default Tag;
+export default Category;

@@ -55,7 +55,7 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
   }
 });
 
-  router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const postRepository = getRepository(Post);
   const post = await postRepository.findOne({
@@ -66,7 +66,6 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
   return res.status(400).json({
     message: 'Invalid id.',
   });
-
 });
 
 router.post('/', ensureAuthenticated, async (req, res) => {

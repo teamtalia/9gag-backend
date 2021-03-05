@@ -78,7 +78,8 @@
     "commit": "git-cz",
     "lint": "eslint src --ext ts,tsx",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "postbuild": "copyfiles ./src/mails/* ./dist/mails -f"
+    "postbuild": "copyfiles ./src/mails/* ./dist/mails -f",
+    "heroku-postbuild": "typeorm migration:run"
   },
   "repository": {
     "type": "git",

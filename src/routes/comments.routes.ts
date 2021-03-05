@@ -6,34 +6,90 @@ import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreateCommentService from '../services/posts/CreateCommentService';
 import UpdateCommentService from '../services/posts/UpdateCommentService';
 import ReplyCommentService from '../services/posts/ReplyCommentService';
+import RemoveCommentService from '../services/posts/RemoveCommentService';
 import CreateCommentMetaService from '../services/posts/CreateCommentMetaService';
 import UpdateCommentMetaService from '../services/posts/UpdateCommentMetaService';
 
-// import User from '../models/User';
+import Comment from '../models/Comment';
 import Post from '../models/Post';
+import User from '../models/User';
 
 const router = Router();
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/:id/comments', ensureAuthenticated, async (req, res) => {
+router.get('/:id/comments', async (req, res) => {
   const { id } = req.params;
+  const { order } = req.query;
 
+  const commentsRepository = getRepository(Comment);
   const postRepository = getRepository(Post);
-  const post = await postRepository.findOne({
-    where: { id },
-    relations: [
-      'comments',
-      'comments.replies',
-      'comments.replies.meta',
-      'comments.reply',
-      'comments.meta',
-      'comments.file',
-    ], // eager + nested relations ❤️
+  const post = await postRepository.findOne({ where: { id } });
+  let comments = (
+    await commentsRepository.find({
+      where: { post },
+      order: { createdAt: 'DESC' },
+      relations: [
+        'replies',
+        'replies.file',
+        'replies.replies',
+        'replies.meta',
+        'replies.user',
+        'replies.user.avatar',
+        'reply',
+        'meta',
+        'file',
+        'user',
+        'user.avatar',
+      ],
+    })
+  ).map(el => {
+    const comment = el;
+    comment.user = ({
+      id: comment.user.id,
+      fullname: comment.user.fullname,
+      avatar: comment.user.avatar,
+    } as unknown) as User;
+    return comment;
   });
-  if (post) {
+  comments = comments.filter(comment => comment.reply === null);
+  if (order === 'hot') {
+    comments = comments
+      .map(comment => {
+        const points =
+          comment.meta.reduce((old, current) => old + current.vote, 0) +
+          comment.replies.reduce(
+            (old, current) =>
+              old +
+              current.meta.reduce(
+                (oldOld, currentCurrent) => oldOld + currentCurrent.vote,
+                0,
+              ),
+            0,
+          );
+        return {
+          ...comment,
+          points,
+        };
+      })
+      .sort((a, b) => {
+        if (a.points > b.points) {
+          return -1;
+        }
+        if (a.points > b.points) {
+          return 1;
+        }
+        return 0;
+      })
+      .map(el => {
+        const comment = el;
+        delete comment.points;
+        return (comment as unknown) as Comment;
+      });
+  }
+  if (comments) {
     return res.json({
-      comments: post.comments.filter(comment => comment.reply === null),
+      comments,
     });
   }
   return res.status(500).json({
@@ -88,7 +144,7 @@ router.put('/:post/comments/:id', ensureAuthenticated, async (req, res) => {
 
 router.post('/:post/comments/:id', ensureAuthenticated, async (req, res) => {
   const { id: userId } = req.token.user;
-  const { text } = req.body;
+  const { text, fileId } = req.body;
   const { post: postId, id: commentId } = req.params;
   const replyCommentService = new ReplyCommentService();
   try {
@@ -97,8 +153,29 @@ router.post('/:post/comments/:id', ensureAuthenticated, async (req, res) => {
       userId,
       postId,
       commentId,
+      fileId,
     });
     return res.status(201).json({
+      ...comment,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
+router.delete('/:post/comments/:id', ensureAuthenticated, async (req, res) => {
+  const { id: userId } = req.token.user;
+  const { post: postId, id: commentId } = req.params;
+  const removeCommentService = new RemoveCommentService();
+  try {
+    const comment = await removeCommentService.execute({
+      userId,
+      postId,
+      commentId,
+    });
+    return res.status(200).json({
       ...comment,
     });
   } catch (err) {

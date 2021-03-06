@@ -30,7 +30,7 @@ class RemoveCommentService {
 
     const commentExists = await commentsRepository.findOne({
       where: { id: commentId },
-      relations: ['replies'],
+      relations: ['replies', 'user'],
     });
 
     if (!userExists) {
@@ -39,7 +39,7 @@ class RemoveCommentService {
     if (!postExists) {
       throw new ServiceError('Postagem inválida.', 400);
     }
-    if (!postExists) {
+    if (!commentExists) {
       throw new ServiceError('Comentário inválida.', 400);
     }
     if (commentExists.user.id !== userExists.id) {
@@ -50,8 +50,11 @@ class RemoveCommentService {
     }
 
     try {
-      // adicionar a parte do amazon s3
-      return await commentsRepository.remove(commentExists);
+      const comment = await commentsRepository.remove(commentExists);
+      delete comment.user.password;
+      delete comment.user.verifiedAt;
+      delete comment.user.verificationCode;
+      return comment;
     } catch (err) {
       throw new ServiceError(`Erro ao interagir com um comentario: ${err}`);
     }

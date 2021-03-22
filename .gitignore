@@ -2,3 +2,5 @@ node_modules
 dist
 .env
 .env.test
+tmp/*
+package-lock.json

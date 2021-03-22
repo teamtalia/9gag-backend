@@ -6,11 +6,13 @@ import {
   ManyToOne,
   JoinTable,
   ManyToMany,
-  // OneToMany,
+  OneToMany,
 } from 'typeorm';
 import User from './User';
 import File from './File';
 import Tag from './Tag';
+import Comment from './Comment';
+import UserPost from './UserPost';
 
 @Entity('posts')
 class Post {
@@ -37,6 +39,17 @@ class Post {
 
   @ManyToOne(() => File, file => file.posts)
   file: File;
+
+  @OneToMany(() => Comment, comment => comment.post)
+  comments: Comment[];
+
+  @ManyToMany(() => UserPost)
+  @JoinTable({
+    name: 'post_votes',
+    joinColumn: { name: 'postId' },
+    inverseJoinColumn: { name: 'voted' },
+  })
+  votes: UserPost[];
 
   @ManyToMany(() => Tag)
   @JoinTable({

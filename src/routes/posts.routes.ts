@@ -2,13 +2,13 @@ import { Router } from 'express';
 import bodyParser from 'body-parser';
 
 import { getRepository } from 'typeorm';
-import { TokenExpiredError } from 'jsonwebtoken';
+// import { TokenExpiredError } from 'jsonwebtoken';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreatePostService from '../services/posts/CreatePostService';
 import InteractPostService from '../services/posts/InteractPostService';
 // import User from '../models/User';
 import Post from '../models/Post';
-import User from '../models/User';
+// import User from '../models/User';
 
 const router = Router();
 
@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
   // criar o serviço de buscar posts posteriormente (feed)
   // precisa tambem filtrar a respostas pra não retornar informações sensiveis
   // const userRepository = getRepository(User);
+
   const postRepository = getRepository(Post);
   // const user = await userRepository.findOne({
   //   where: { id },
@@ -46,6 +47,48 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
       id: postUser.id,
       post: postUser.post.id,
       voted: vote,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const postRepository = getRepository(Post);
+  const post = await postRepository.findOne({
+    where: { id },
+    relations: ['file', 'tags'],
+  });
+  if (post) return res.json(post);
+  return res.status(400).json({
+    message: 'Invalid id.',
+  });
+});
+
+router.post('/', ensureAuthenticated, async (req, res) => {
+  const { id } = req.token.user;
+  const { tags, sensitive, originalPoster, file, description } = req.body;
+  // a parte de upvote/downvote e etc e criado em outdescriptionro contexto...
+  const createPostService = new CreatePostService();
+  try {
+    const post = await createPostService.execute({
+      file,
+      originalPoster,
+      userId: id,
+      sensitive,
+      tags,
+      description,
+    });
+    return res.status(201).json({
+      id: post.id,
+      file: post.file.location,
+      sensitive,
+      tags: post.tags,
+      originalPoster,
+      description,
     });
   } catch (err) {
     return res.status(err.status).json({

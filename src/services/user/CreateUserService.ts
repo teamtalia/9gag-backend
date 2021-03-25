@@ -37,7 +37,6 @@ class CreateUserService {
 
     let avatar = null;
     if (fileId) {
-      console.log('ue brother');
       avatar = await fileRepository.findOne({ where: { id: fileId } });
       if (!avatar) {
         throw new ServiceError('Invalid File id', 400);

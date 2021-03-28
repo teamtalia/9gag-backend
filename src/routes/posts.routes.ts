@@ -1,14 +1,11 @@
 import { Router } from 'express';
 import bodyParser from 'body-parser';
-
 import { getRepository } from 'typeorm';
-import { TokenExpiredError } from 'jsonwebtoken';
 import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreatePostService from '../services/posts/CreatePostService';
 import InteractPostService from '../services/posts/InteractPostService';
-// import User from '../models/User';
+import ShufflePostService from '../services/posts/ShufflePostService';
 import Post from '../models/Post';
-import User from '../models/User';
 
 const router = Router();
 
@@ -17,16 +14,9 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.get('/', async (req, res) => {
   // comentário
   // criar o serviço de buscar posts posteriormente (feed)
-  // precisa tambem filtrar a respostas pra não retornar informações sensiveis
-  // const userRepository = getRepository(User);
-
   const postRepository = getRepository(Post);
-  // const user = await userRepository.findOne({
-  //   where: { id },
-  //   relations: ['posts', 'posts.file', 'posts.tags'], // eager relations + nested relations ❤️
-  // });
   const posts = await postRepository.find({
-    relations: ['file', 'tags'],
+    relations: ['file', 'tags', 'comments'],
   });
   return res.json({
     posts,
@@ -55,6 +45,20 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.get('/shuffle', async (req, res) => {
+  const shufflePostService = new ShufflePostService();
+  try {
+    const post = await shufflePostService.execute();
+    return res.status(200).json({
+      ...post,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const postRepository = getRepository(Post);
@@ -64,7 +68,7 @@ router.get('/:id', async (req, res) => {
   });
   if (post) return res.json(post);
   return res.status(400).json({
-    message: 'Invalid id.',
+    message: 'ID Inválido.',
   });
 });
 

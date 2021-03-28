@@ -38,7 +38,7 @@ class CreatePostService {
     });
 
     if (!userExists) {
-      throw new ServiceError('Invalid User.', 400);
+      throw new ServiceError('Usuário Inválido.', 400);
     }
 
     const fileExists = await filesRepository.findOne({
@@ -46,7 +46,7 @@ class CreatePostService {
     });
 
     if (!fileExists) {
-      throw new ServiceError('Invalid File Id.', 400);
+      throw new ServiceError('Id de arquivo inválido.', 400);
     }
     const tagsToInsert = await Promise.all(
       tags.map(async tag => {
@@ -54,7 +54,7 @@ class CreatePostService {
           where: { name: tag },
         });
         if (!tagExists) {
-          throw new ServiceError(`Invalid Tag: ${tag}.`, 400);
+          throw new ServiceError(`Tag inválida: ${tag}.`, 400);
         }
         return tagExists;
       }),
@@ -110,7 +110,7 @@ class CreatePostService {
         relations: ['file', 'tags'],
       });
     } catch (err) {
-      throw new ServiceError(`error on create post: ${err}`);
+      throw new ServiceError(`Erro ao criar postagem: ${err}`);
     }
   }
 }

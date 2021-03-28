@@ -71,11 +71,9 @@ class File {
         Bucket: AwsBucket,
         Key: this.key,
       }).promise();
-      console.log('deu bom');
     } catch (err) {
-      console.log(err);
       throw new ServiceError(
-        `error on moving the file in the amazon bucket: ${err}`,
+        `erro ao mover o arquivo no intervalo amazon: ${err}`,
       );
     }
   }

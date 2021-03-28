@@ -29,7 +29,7 @@ class CreateFileService {
     });
 
     if (!userExists) {
-      throw new ServiceError('Invalid User.', 400);
+      throw new ServiceError('Usuário Inválido.', 400);
     }
     // const child = spawn('mediainfo', [file.location]);
 
@@ -57,10 +57,10 @@ class CreateFileService {
       }).promise();
       if (data.$response.error) {
         throw new ServiceError(
-          `erro ao remover arquivo do bucket: ${data.$response.error.message}`,
+          `Erro ao remover arquivo do balde: ${data.$response.error.message}`,
         );
       }
-      throw new ServiceError(`error on upload file: ${err}`);
+      throw new ServiceError(`Erro no upload do arquivo: ${err}`);
     }
   }
 }

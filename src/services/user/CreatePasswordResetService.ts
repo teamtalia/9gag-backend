@@ -21,11 +21,11 @@ class CreatePasswordResetService {
     });
 
     if (!userExits) {
-      throw new ServiceError('Email not registered.', 400);
+      throw new ServiceError('Email não registrado.', 400);
     }
     if (userExits.password === null) {
       throw new ServiceError(
-        'Accounts created by google are not allowed to reset the password.',
+        'Contas criadas pelo Google não têm permissão para redefinir a senha.',
         400,
       );
     }
@@ -40,7 +40,7 @@ class CreatePasswordResetService {
         });
         return sended;
       } catch (err) {
-        throw new ServiceError(`error on generate password reset: ${err}`);
+        throw new ServiceError(`Erro ao gerar redefinição de senha: ${err}`);
       }
     } else {
       do {
@@ -86,7 +86,7 @@ class CreatePasswordResetService {
         },
       )) as boolean;
     } catch (err) {
-      throw new ServiceError(`error on generate password reset: ${err}`);
+      throw new ServiceError(`Erro ao gerar redefinição de senha: ${err}`);
     }
   }
 }

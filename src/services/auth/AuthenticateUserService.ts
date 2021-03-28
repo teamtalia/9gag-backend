@@ -39,7 +39,7 @@ class AuthenticateUserService {
     });
 
     if (!user) {
-      throw new ServiceError('Email or password mismatch.', 400);
+      throw new ServiceError('Incompatibilidade de e-mail ou senha.', 400);
     }
 
     if (
@@ -48,7 +48,7 @@ class AuthenticateUserService {
       !user.password
     ) {
       throw new ServiceError(
-        'Accounts created by google are not allowed to sign in using email.',
+        'Contas criadas pelo Google não têm permissão para fazer login usando e-mail.',
         400,
       );
     }
@@ -71,7 +71,7 @@ class AuthenticateUserService {
         });
         return { token, payload };
       }
-      throw new ServiceError('Email or password mismatch.', 400);
+      throw new ServiceError('Incompatibilidade de e-mail ou senha.', 400);
     } catch (err) {
       throw new ServiceError(err, 500);
     }

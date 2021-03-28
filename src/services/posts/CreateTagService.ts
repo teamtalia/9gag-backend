@@ -18,10 +18,6 @@ class CreateTagService {
       where: { id: icon },
     });
 
-    // if (!fileExits) {
-    //   throw new ServiceError('Invalid Icon Id.', 400);
-    // }
-
     const createdAt = new Date();
     const updatedAt = new Date();
 
@@ -40,9 +36,9 @@ class CreateTagService {
           relations: ['icon'],
         });
       }
-      throw new ServiceError(`error on retrive new tag from database.`);
+      throw new ServiceError(`Erro ao recuperar nova tag do banco de dados.`);
     } catch (err) {
-      throw new ServiceError(`error on create tag: ${err}`);
+      throw new ServiceError(`Erro ao criar tag: ${err}`);
     }
   }
 }

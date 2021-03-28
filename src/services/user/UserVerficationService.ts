@@ -14,7 +14,7 @@ class UserVerficationService {
       where: { verificationCode: code },
     });
     if (!user) {
-      throw new ServiceError('mismatch code', 400);
+      throw new ServiceError('Código incompatível.', 400);
     }
     try {
       const verifyUser = await userRepository.save({

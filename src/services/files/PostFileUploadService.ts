@@ -32,9 +32,7 @@ class PostFileUploadService {
         Key: file.key,
       }).promise();
     } catch (err) {
-      throw new ServiceError(
-        `error on moving the file in the amazon bucket: ${err}`,
-      );
+      throw new ServiceError(`Erro ao mover o arquivo no balde amazon: ${err}`);
     }
     try {
       return filesRepository.save({
@@ -44,7 +42,7 @@ class PostFileUploadService {
       });
     } catch (err) {
       throw new ServiceError(
-        `error on updating the file key in the database: ${err}`,
+        `Erro ao atualizar a chave do arquivo no banco de dados: ${err}`,
       );
     }
   }

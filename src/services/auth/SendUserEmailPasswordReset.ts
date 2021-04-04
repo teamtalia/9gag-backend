@@ -21,7 +21,7 @@ class SendUserEmailVerification {
       await mailer.sendMail({
         to: user.email,
         template: 'password.reset',
-        subject: 'Reset Password Code',
+        subject: 'Redefinir o código de senha',
         context: {
           code: passwordReset.code,
           name: user.fullname,
@@ -29,7 +29,9 @@ class SendUserEmailVerification {
       } as HBSProps);
       return true;
     } catch (err) {
-      throw new ServiceError(`error on send email to reset password: ${err}`);
+      throw new ServiceError(
+        `Erro ao enviar e-mail para redefinir senha: ${err}`,
+      );
     }
   }
 }

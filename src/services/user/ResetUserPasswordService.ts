@@ -26,10 +26,10 @@ class ResetUserPasswordService {
       where: { code },
     });
     if (!passwordResetExits) {
-      throw new ServiceError('Invalid Code.', 400);
+      throw new ServiceError('Código inválido.', 400);
     }
     if (password !== passwordConfirm) {
-      throw new ServiceError('Passwords do not match', 400);
+      throw new ServiceError('As senhas não coincidem.', 400);
     }
     const { user } = passwordResetExits;
 
@@ -43,7 +43,7 @@ class ResetUserPasswordService {
       });
       await passwordResetRepository.remove(passwordResetExits);
     } catch (err) {
-      throw new ServiceError(`error on reset password: ${err}`);
+      throw new ServiceError(`Erro na redefinição de senha: ${err}`);
     }
   }
 }

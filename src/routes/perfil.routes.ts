@@ -11,28 +11,28 @@ const router = Router();
 
 // faltar ordenar
 
-router.get('/posts/my', async (req, res) => {
+router.get('/:username/posts/my', async (req, res) => {
   const userRepository = getRepository(User);
-  const { username } = req.body;
+  const { username } = req.params;
   const user = await userRepository.findOne({
     where: { username },
     relations: ['posts', 'posts.file', 'posts.tags', 'posts.comments'],
   });
   return res.json({
-    posts: user.posts,
+    posts: user.posts.map(el => ({ ...el, reason: 'Enviado' })),
   });
 });
 
-router.get('/posts/comments', async (req, res) => {
+router.get('/:username/posts/comments', async (req, res) => {
   // essa rota precisa trazer todos os posts que eu comentei.
-  const { username } = req.body;
+  const { username } = req.params;
   const fetchCommentedService = new FetchCommentedService();
   try {
     const posts = await fetchCommentedService.execute({
       username,
     });
     return res.status(201).json({
-      posts,
+      posts: posts.map(post => ({ ...post, reason: 'Comentado' })),
     });
   } catch (err) {
     return res.status(err.status).json({
@@ -41,16 +41,16 @@ router.get('/posts/comments', async (req, res) => {
   }
 });
 
-router.get('/posts/upvotes', async (req, res) => {
+router.get('/:username/posts/upvotes', async (req, res) => {
   // essa rota precisa trazer todos os posts que eu dei upvote.
-  const { username } = req.body;
+  const { username } = req.params;
   const fetchUpvotedService = new FetchUpvotedService();
   try {
     const posts = await fetchUpvotedService.execute({
       username,
     });
     return res.status(201).json({
-      posts,
+      posts: posts.map(post => ({ ...post, reason: 'Curtido' })),
     });
   } catch (err) {
     return res.status(err.status).json({
@@ -59,9 +59,9 @@ router.get('/posts/upvotes', async (req, res) => {
   }
 });
 
-router.get('/posts', async (req, res) => {
+router.get('/:username/posts', async (req, res) => {
   // essa rota precisa trazer todos os posts que eu interagi.
-  const { username } = req.body;
+  const { username } = req.params;
   const fetchHomeService = new FetchHomeService();
   try {
     const posts = await fetchHomeService.execute({

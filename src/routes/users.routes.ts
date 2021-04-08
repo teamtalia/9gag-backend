@@ -31,6 +31,31 @@ router.route('/').get(ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.get('/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      relations: ['avatar'],
+      where: { username },
+    });
+    if (user) {
+      delete user.password;
+      delete user.verificationCode;
+      return res.status(200).json({
+        ...user,
+      });
+    }
+    return res.status(400).json({
+      message: 'Usuario não foi encontrado',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err,
+    });
+  }
+});
+
 router.post('/', async (req, res) => {
   const {
     password,

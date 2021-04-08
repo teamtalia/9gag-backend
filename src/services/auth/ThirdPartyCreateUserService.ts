@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { getRepository } from 'typeorm';
 import ServiceError from '../../util/ServiceError';
+import { randomStr } from '../../util/String';
 import User from '../../models/User';
 import { verifyToken } from '../../config/google';
 import UploadExternalFileService from '../files/UploadExternalFileService';
@@ -36,8 +37,16 @@ class ThirdPartyCreateUserService {
       where: { email: userEmail },
     });
     if (userExits) {
-      throw new ServiceError('Email already registered.', 400);
+      throw new ServiceError('E-mail já registrado.', 400);
     }
+    const username = randomStr(16);
+
+    do {
+      const usernameExists = await userRepository.findOne({
+        where: { username },
+      });
+      if (!usernameExists) break;
+    } while (true);
 
     const createdAt = new Date();
     const updatedAt = new Date();
@@ -49,6 +58,7 @@ class ThirdPartyCreateUserService {
       createdAt,
       updatedAt,
       verifiedAt,
+      username,
     });
     try {
       const user = await userRepository.save(userData);
@@ -65,7 +75,7 @@ class ThirdPartyCreateUserService {
       }
       return user;
     } catch (err) {
-      throw new ServiceError(`error on created user: ${err}`);
+      throw new ServiceError(`Erro ao criar usuário: ${err}`);
     }
   }
 }

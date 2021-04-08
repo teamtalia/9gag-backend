@@ -11,6 +11,7 @@ import sessionRouter from './routes/session.routes';
 import filesRouter from './routes/files.routes';
 import tagsRouter from './routes/tags.routes';
 import categoriesRouter from './routes/categories.routes';
+import perfilRouter from './routes/perfil.routes';
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res
     .status(200)
-    .json({ message: 'welcome to talia api, check the documentation.' });
+    .json({ message: 'bem-vindo ao api talia, verifique a documentação.' });
 });
 
 // need rewrite
@@ -39,5 +40,6 @@ app.use('/session', sessionRouter);
 app.use('/files', filesRouter);
 app.use('/tags', tagsRouter);
 app.use('/categories', categoriesRouter);
+app.use('/perfil', perfilRouter);
 
 export default app;

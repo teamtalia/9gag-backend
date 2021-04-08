@@ -34,6 +34,9 @@ class User {
   @Column({ nullable: true })
   password: string;
 
+  @Column({ nullable: true, unique: true })
+  username: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

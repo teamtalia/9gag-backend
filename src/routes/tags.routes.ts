@@ -10,17 +10,17 @@ const router = Router();
 router.get('/', async (req, res) => {
   // precisa mudar para um serviço
   const tagsRepository = getRepository(Tag);
-  const tags = await tagsRepository.find({ relations: ['icon'] });
+  const tags = await tagsRepository.find({ relations: ['icon', 'category'] });
   return res.json({
     tags,
   });
 });
 
 router.post('/', ensureAuthenticated, async (req, res) => {
-  const { name, icon } = req.body;
+  const { name, icon, categoryId } = req.body;
   const createTagService = new CreateTagService();
   try {
-    const tag = await createTagService.execute({ name, icon });
+    const tag = await createTagService.execute({ name, icon, categoryId });
     return res.status(201).json({
       name,
       slug: tag.slug,

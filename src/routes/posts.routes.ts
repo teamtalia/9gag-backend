@@ -38,11 +38,14 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
   const { postId, vote } = req.body;
   const createUserPostService = new InteractPostService();
   try {
+    // passando parametros para função criada service
     const postUser = await createUserPostService.execute({
       postId,
       userId: id,
       vote,
     });
+    // filtra informações e retorna só o necessário
+    // 201 novo recurso criado
     return res.status(201).json({
       id: postUser.id,
       post: postUser.post.id,
@@ -53,6 +56,11 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
       message: err.message,
     });
   }
+});
+
+router.get('/hot', async (req, res) => {
+  // fazer contagem dos votos
+  // retornar um vetor com os posts em ordem decrescentes
 });
 
 router.get('/:id', async (req, res) => {

@@ -21,10 +21,14 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.get('/:id/comments', async (req, res) => {
   const { id } = req.params;
   const { order } = req.query;
+  // ?order=hot|fresh
 
+  // pega post que quer organizar por hot ou fresh
   const commentsRepository = getRepository(Comment);
   const postRepository = getRepository(Post);
   const post = await postRepository.findOne({ where: { id } });
+  // todos os comentários e ordena decrescente
+  // trás relações  aninhadas
   let comments = (
     await commentsRepository.find({
       where: { post },
@@ -52,11 +56,13 @@ router.get('/:id/comments', async (req, res) => {
     } as unknown) as User;
     return comment;
   });
+
   comments = comments.filter(comment => comment.reply === null);
   if (order === 'hot') {
     comments = comments
       .map(comment => {
         const points =
+          // criou função pra reduzir o vetor de contagem de pontos
           comment.meta.reduce((old, current) => old + current.vote, 0) +
           comment.replies.reduce(
             (old, current) =>
@@ -76,7 +82,7 @@ router.get('/:id/comments', async (req, res) => {
         if (a.points > b.points) {
           return -1;
         }
-        if (a.points > b.points) {
+        if (a.points < b.points) {
           return 1;
         }
         return 0;

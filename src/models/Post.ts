@@ -47,7 +47,7 @@ class Post {
   @JoinTable({
     name: 'post_votes',
     joinColumn: { name: 'postId' },
-    inverseJoinColumn: { name: 'voted' },
+    inverseJoinColumn: { name: 'userId' },
   })
   votes: UserPost[];
 

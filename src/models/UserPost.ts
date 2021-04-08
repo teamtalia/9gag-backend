@@ -9,7 +9,7 @@ import {
 import User from './User';
 import Post from './Post';
 
-@Entity('userPost')
+@Entity('user_posts')
 class UserPost {
   @PrimaryGeneratedColumn('uuid')
   id: string;

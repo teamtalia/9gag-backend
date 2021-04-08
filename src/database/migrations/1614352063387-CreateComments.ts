@@ -37,10 +37,7 @@ export class CreateComments1614352063387 implements MigrationInterface {
             name: 'edited',
             type: 'boolean',
             isNullable: true,
-<<<<<<< HEAD
-=======
             default: false,
->>>>>>> 151c9780b2241b6436ea236542f86bcc135aa3c0
           },
           {
             name: 'postId',

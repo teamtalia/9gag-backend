@@ -33,7 +33,7 @@ class UploadExternalFileService {
     });
 
     if (!userExists) {
-      throw new ServiceError('Invalid User.', 400);
+      throw new ServiceError('Usuário Inválido.', 400);
     }
 
     const originalname = parse(url).pathname;

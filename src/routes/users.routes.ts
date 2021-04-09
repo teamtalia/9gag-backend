@@ -31,8 +31,40 @@ router.route('/').get(ensureAuthenticated, async (req, res) => {
   }
 });
 
+router.get('/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      relations: ['avatar'],
+      where: { username },
+    });
+    if (user) {
+      delete user.password;
+      delete user.verificationCode;
+      return res.status(200).json({
+        ...user,
+      });
+    }
+    return res.status(400).json({
+      message: 'Usuario não foi encontrado',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err,
+    });
+  }
+});
+
 router.post('/', async (req, res) => {
-  const { password, email, fullname, thirdPartyToken, avatar } = req.body;
+  const {
+    password,
+    email,
+    fullname,
+    thirdPartyToken,
+    avatar,
+    username,
+  } = req.body;
   try {
     let user;
     if (!thirdPartyToken) {
@@ -42,6 +74,7 @@ router.post('/', async (req, res) => {
         email,
         password,
         fileId: avatar,
+        username,
       });
     } else {
       const createThirdPartyUserService = new ThirdPartyCreateUserService();
@@ -60,7 +93,6 @@ router.post('/', async (req, res) => {
       }),
     );
   } catch (err) {
-    console.log('error', err);
     return res.status(err.status).json({
       message: err.message,
     });
@@ -96,7 +128,7 @@ router.post('/password/reset', async (req, res) => {
     });
     return res.status(200).json({
       message:
-        'An email has been sent to you with instructions to reset your password.',
+        'Um e-mail foi enviado a você com instruções para redefinir sua senha.',
     });
   } catch (err) {
     return res.status(err.status).json({
@@ -116,7 +148,7 @@ router.put('/password/reset', async (req, res) => {
     });
     return res.status(200).json({
       message:
-        'Your password has been reset, login with the new password and have a nice day.',
+        'Sua senha foi redefinida, faça o login com a nova senha e tenha um bom dia.',
     });
   } catch (err) {
     return res.status(err.status).json({

@@ -7,7 +7,9 @@ const mailer = createTransport({
     user: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASSWORD,
   },
-  service: 'gmail',
+  host: process.env.MAIL_HOST,
+  port: Number(process.env.MAIL_PORT),
+  secure: false,
 });
 
 mailer.use(

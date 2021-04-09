@@ -19,7 +19,7 @@ class SendUserEmailVerification {
       await mailer.sendMail({
         to: user.email,
         template: 'verification.user',
-        subject: 'Email Verification',
+        subject: 'Verificação de e-mail',
         context: {
           code: user.verificationCode,
           name: user.fullname,
@@ -27,7 +27,7 @@ class SendUserEmailVerification {
       } as HBSProps);
       return true;
     } catch (err) {
-      throw new ServiceError(`error on created user: ${err}`);
+      throw new ServiceError(`Erro ao criar usuário: ${err}`);
     }
   }
 }

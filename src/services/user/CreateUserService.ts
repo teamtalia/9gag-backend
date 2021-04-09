@@ -4,6 +4,7 @@ import { hash } from 'bcrypt';
 
 import SendUserEmailVerification from '../auth/SendUserEmailVerification';
 import ServiceError from '../../util/ServiceError';
+import { validateUsername } from '../../util/String';
 import User from '../../models/User';
 import auth from '../../config/auth';
 import File from '../../models/File';
@@ -14,6 +15,7 @@ interface Request {
   email: string;
   password: string;
   fileId?: string;
+  username: string;
 }
 
 class CreateUserService {
@@ -23,6 +25,7 @@ class CreateUserService {
     email,
     password,
     fileId,
+    username,
   }: Request): Promise<User> {
     const userRepository = getRepository(User);
     const fileRepository = getRepository(File);
@@ -32,15 +35,24 @@ class CreateUserService {
       where: { email },
     });
     if (userExits) {
-      throw new ServiceError('Email already registered.', 400);
+      throw new ServiceError('E-mail já registrado.', 400);
+    }
+    const usernameExists = await userRepository.findOne({
+      where: { username },
+    });
+    if (usernameExists) {
+      throw new ServiceError('Nome de usuário já registrado.', 400);
+    }
+    const invalidUsername = validateUsername(username);
+    if (invalidUsername) {
+      throw new ServiceError(invalidUsername, 400);
     }
 
     let avatar = null;
     if (fileId) {
-      console.log('ue brother');
       avatar = await fileRepository.findOne({ where: { id: fileId } });
       if (!avatar) {
-        throw new ServiceError('Invalid File id', 400);
+        throw new ServiceError('ID de arquivo inválido.', 400);
       }
     }
 
@@ -71,6 +83,7 @@ class CreateUserService {
         updatedAt,
         verificationCode,
         avatar,
+        username,
       });
       return (await getManager().transaction(
         async transactionalEntityManager => {
@@ -87,7 +100,7 @@ class CreateUserService {
         },
       )) as User;
     } catch (err) {
-      throw new ServiceError(`error on created user: ${err}`);
+      throw new ServiceError(`Erro no usuário criado: ${err}`);
     }
   }
 }

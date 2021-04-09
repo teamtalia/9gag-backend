@@ -6,12 +6,14 @@ import Post from '../../models/Post';
 import UserPost from '../../models/UserPost';
 // import Comment from '../../models/Comments';
 
+// DTO explica o método
 interface Request {
   postId: string;
   userId: string;
   vote: number;
 }
 
+// typeorm usa o cara que vai fazer as operações sobre a tabela que são os repositórios
 class InteractPostService {
   public async execute({ postId, userId, vote }: Request): Promise<UserPost> {
     const userRepository = getRepository(User);

@@ -5377,6 +5377,13 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
     integrity sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=
   
+  mediainfo.js@^0.1.4:
+    version "0.1.4"
+    resolved "https://registry.yarnpkg.com/mediainfo.js/-/mediainfo.js-0.1.4.tgz#74fd7674ac93d4c62598808338fd2bc20f040c13"
+    integrity sha512-M7j4JJ17WrvrmjtFls5KBOJtw2kX1aXT6ki6e96Y10RglNpNzYwdQZhKOrfIT6w//OVMGjfMwQaIH9aEzJMacA==
+    dependencies:
+      yargs "^15.4.1"
+  
   memory-pager@^1.0.2:
     version "1.5.0"
     resolved "https://registry.yarnpkg.com/memory-pager/-/memory-pager-1.5.0.tgz#d8751655d22d384682741c972f2c3d6dfa3e66b5"

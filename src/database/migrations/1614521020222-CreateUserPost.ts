@@ -7,9 +7,9 @@ import {
 
 export class CreateUserPost1614521020222 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    /* await queryRunner.createTable(
+    await queryRunner.createTable(
       new Table({
-        name: 'post_votes',
+        name: 'user_posts',
         columns: [
           {
             name: 'id',
@@ -30,38 +30,38 @@ export class CreateUserPost1614521020222 implements MigrationInterface {
           },
           {
             name: 'voted',
-            type: 'boolean',
+            type: 'integer',
             isNullable: false,
           },
         ],
       }),
     );
     await queryRunner.createForeignKey(
-      'post_votes',
+      'user_posts',
       new TableForeignKey({
-        name: 'fk_join_posts_tags_tag',
-        columnNames: ['tagId'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'tags',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'post_votes',
-      new TableForeignKey({
-        name: 'fk_join_posts_tags_post',
+        name: 'fk_user_posts_posts',
         columnNames: ['postId'],
         referencedColumnNames: ['id'],
         referencedTableName: 'posts',
         onDelete: 'CASCADE',
       }),
-    ); */
+    );
+
+    await queryRunner.createForeignKey(
+      'user_posts',
+      new TableForeignKey({
+        name: 'fk_user_posts_users',
+        columnNames: ['userId'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'users',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    /* await queryRunner.dropForeignKey('post_votes', 'fk_join_posts_votes_post');
-    await queryRunner.dropForeignKey('post_votes', 'fk_join_posts_votes_vote');
-    await queryRunner.dropTable('post_votes'); */
+    await queryRunner.dropForeignKey('user_posts', 'fk_user_posts_users');
+    await queryRunner.dropForeignKey('user_posts', 'fk_user_posts_posts');
+    await queryRunner.dropTable('user_posts');
   }
 }

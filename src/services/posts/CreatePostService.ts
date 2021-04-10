@@ -63,35 +63,6 @@ class CreatePostService {
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    // try {
-    //   await S3.copyObject({
-    //     Bucket: AwsBucket,
-    //     CopySource: `${AwsBucket}/${fileExists.key}`, // old file Key
-    //     Key: `${fileExists.key.replace('tmp/', '')}`, // new file Key
-    //     ACL: 'public-read',
-    //   }).promise();
-
-    //   await S3.deleteObject({
-    //     Bucket: AwsBucket,
-    //     Key: fileExists.key,
-    //   }).promise();
-    // } catch (err) {
-    //   throw new ServiceError(
-    //     `error on moving the file in the amazon bucket: ${err}`,
-    //   );
-    // }
-    // try {
-    //   filesRepository.save({
-    //     id: fileExists.id,
-    //     key: fileExists.key.replace('tmp/', ''),
-    //     location: fileExists.location.replace('tmp/', ''),
-    //   });
-    // } catch (err) {
-    //   throw new ServiceError(
-    //     `error on updating the file key in the database: ${err}`,
-    //   );
-    // }
-
     try {
       await postFileUploadService.execute({ file: fileExists });
       const postData = postsRepository.create({

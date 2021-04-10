@@ -13,6 +13,7 @@ import File from './File';
 import Post from './Post';
 import Comment from './Comment';
 import UserComment from './UserComment';
+import UserPost from './UserPost';
 
 @Entity('users')
 class User {
@@ -21,6 +22,9 @@ class User {
 
   @Column()
   fullname: string;
+
+  @Column({ nullable: true })
+  about: string;
 
   @Column({ nullable: true })
   age: number;
@@ -60,6 +64,9 @@ class User {
 
   @OneToMany(() => UserComment, userComment => userComment.user)
   metaComments: UserComment[];
+
+  @OneToMany(() => UserPost, userPost => userPost.user)
+  votePosts: UserPost[];
 
   @ManyToOne(() => File, file => file.avatar)
   @JoinColumn({ name: 'avatar', referencedColumnName: 'id' })

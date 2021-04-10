@@ -59,6 +59,7 @@ class ThirdPartyCreateUserService {
       updatedAt,
       verifiedAt,
       username,
+      about: 'Minha coleção engraçada',
     });
     try {
       const user = await userRepository.save(userData);

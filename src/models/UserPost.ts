@@ -3,30 +3,32 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import User from './User';
 import Post from './Post';
 
-@Entity('userPost')
+@Entity('user_posts')
 class UserPost {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @JoinColumn({ name: 'userId' })
+  // @JoinColumn({ name: 'userId' })
+  @ManyToOne(() => User, user => user.votePosts)
   user: User;
 
-  @JoinColumn({ name: 'postId' })
+  // @JoinColumn({ name: 'postId' })
+  @ManyToOne(() => Post, post => post.votes)
   post: Post;
 
   @Column()
   voted: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @CreateDateColumn({ name: 'updatedAt' })
+  @CreateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
 

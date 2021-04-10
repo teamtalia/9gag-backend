@@ -84,6 +84,7 @@ class CreateUserService {
         verificationCode,
         avatar,
         username,
+        about: 'Minha coleção engraçada',
       });
       return (await getManager().transaction(
         async transactionalEntityManager => {

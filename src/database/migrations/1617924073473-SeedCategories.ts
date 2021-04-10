@@ -1,22 +1,40 @@
+import slugify from 'slugify';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import Category from '../../models/Category';
 
 export class SeedCategories1617924073473 implements MigrationInterface {
   payload = [
-    { name: 'abrobinha', slug: 'abro' },
-    { name: 'Feijao', slug: 'feij' },
+    'MITOLOGIA',
+    'MODA/BELEZA',
+    'ESPORTES',
+    'FILMES/SÉRIES',
+    'CORONAVIRUS',
+    'ENGRAÇADO',
+    'JOGOS',
+    'MÚSICA',
+    'COMIDAS',
+    'VIAGENS',
+    'CARROS',
+    'ANIMAIS',
+    'POLÍTICA',
   ];
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const categoryRepository = queryRunner.manager.getRepository(Category);
+    const categoryRepository = await queryRunner.manager.getRepository(
+      Category,
+    );
 
-    await categoryRepository.create(this.payload);
+    await categoryRepository.save(
+      this.payload.map(name => ({
+        name,
+        slug: slugify(name),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+    );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    const categoryRepository = queryRunner.manager.getRepository(Category);
-    await (await categoryRepository.find()).map(async category =>
-      categoryRepository.delete(category),
-    );
+  public async down(_: QueryRunner): Promise<void> {
+    // TODO
   }
 }

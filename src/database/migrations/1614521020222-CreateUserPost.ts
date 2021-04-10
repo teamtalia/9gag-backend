@@ -30,7 +30,7 @@ export class CreateUserPost1614521020222 implements MigrationInterface {
           },
           {
             name: 'voted',
-            type: 'boolean',
+            type: 'integer',
             isNullable: false,
           },
         ],

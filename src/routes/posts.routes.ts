@@ -5,6 +5,8 @@ import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import CreatePostService from '../services/posts/CreatePostService';
 import InteractPostService from '../services/posts/InteractPostService';
 import ShufflePostService from '../services/posts/ShufflePostService';
+import FetchPostHotService from '../services/posts/FetchPostHotService';
+import FetchPostFreshService from '../services/posts/FetchPostFreshService';
 import Post from '../models/Post';
 
 const router = Router();
@@ -12,12 +14,15 @@ const router = Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', async (req, res) => {
-  // comentário
-  // criar o serviço de buscar posts posteriormente (feed)
-  const postRepository = getRepository(Post);
-  const posts = await postRepository.find({
-    relations: ['file', 'tags', 'comments'],
-  });
+  const { order } = req.query;
+  let posts;
+  if (!order || order === 'hot') {
+    const fetchPostHotService = new FetchPostHotService();
+    posts = await fetchPostHotService.execute();
+  } else {
+    const fetchPostFreshService = new FetchPostFreshService();
+    posts = await fetchPostFreshService.execute();
+  }
   return res.json({
     posts,
   });
@@ -38,7 +43,7 @@ router.post('/vote', ensureAuthenticated, async (req, res) => {
     // 201 novo recurso criado
     return res.status(201).json({
       id: postUser.id,
-      post: postUser.post.id,
+      post: postId,
       voted: vote,
     });
   } catch (err) {

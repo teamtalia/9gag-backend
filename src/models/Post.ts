@@ -43,13 +43,16 @@ class Post {
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
 
-  @ManyToMany(() => UserPost)
-  @JoinTable({
-    name: 'post_votes',
-    joinColumn: { name: 'postId' },
-    inverseJoinColumn: { name: 'userId' },
-  })
+  @OneToMany(() => UserPost, userPost => userPost.post)
   votes: UserPost[];
+
+  // @ManyToMany(() => UserPost)
+  // @JoinTable({
+  //   name: 'post_votes',
+  //   joinColumn: { name: 'postId' },
+  //   inverseJoinColumn: { name: 'userId' },
+  // })
+  // votes: UserPost[];
 
   @ManyToMany(() => Tag)
   @JoinTable({

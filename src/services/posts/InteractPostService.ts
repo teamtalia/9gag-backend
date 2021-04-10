@@ -19,14 +19,13 @@ class InteractPostService {
     const userRepository = getRepository(User);
     const postsRepository = getRepository(Post);
     const userPostRepository = getRepository(UserPost);
-    // const commentRepository = getRepository(Comment);
 
     const post = await postsRepository.findOne(postId);
     const user = await userRepository.findOne(userId);
 
     if (post && user) {
       const userPost = await userPostRepository.findOne({
-        where: { postId, userId },
+        where: { post, user },
       });
 
       // se não existe tem que criar
@@ -52,10 +51,10 @@ class InteractPostService {
         const userPost2 = await userPostRepository.save(userPostData);
         return userPost2;
       } catch (err) {
-        throw new ServiceError(`error on create tag: ${err}`);
+        throw new ServiceError(`Erro ao interagir com o post: ${err}`);
       }
     } else {
-      throw new ServiceError(`post or user is invalid`);
+      throw new ServiceError(`Post ou usuário invalido.`);
     }
   }
 }

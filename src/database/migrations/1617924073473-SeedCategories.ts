@@ -27,7 +27,7 @@ export class SeedCategories1617924073473 implements MigrationInterface {
     await categoryRepository.save(
       this.payload.map(name => ({
         name,
-        slug: slugify(name),
+        slug: slugify(name.toLowerCase()),
         createdAt: new Date(),
         updatedAt: new Date(),
       })),

@@ -10,7 +10,14 @@ class FetchPostHotService {
     try {
       const posts = (
         await postsRepository.find({
-          relations: ['file', 'tags', 'comments', 'votes'],
+          relations: [
+            'file',
+            'tags',
+            'comments',
+            'votes',
+            'votes.user',
+            'user',
+          ],
           order: { createdAt: 'DESC' },
         })
       )
@@ -32,6 +39,20 @@ class FetchPostHotService {
             return 1;
           }
           return 0;
+        })
+        .map(el => {
+          const post = el;
+          delete post.user.password;
+          delete post.user.verificationCode;
+          delete post.user.votePosts;
+          post.votes = post.votes.map(_vote => {
+            const vote = _vote;
+            delete vote.user.password;
+            delete vote.user.verificationCode;
+            delete vote.user.votePosts;
+            return vote;
+          });
+          return (post as unknown) as Post;
         });
       return posts;
     } catch (err) {

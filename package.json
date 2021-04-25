@@ -84,7 +84,7 @@
     "commit": "git-cz",
     "lint": "eslint src --ext ts,tsx",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "postbuild": "copyfiles ./src/mails/* ./dist/mails -f && ts-node ./node_modules/typeorm/cli.js migration:run && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "postbuild": "copyfiles ./src/mails/* ./dist/mails -f && ts-node ./node_modules/typeorm/cli.js migration:run",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
   },

@@ -62,6 +62,7 @@ class AuthenticateUserService {
             id: user.id,
             fullname: user.fullname,
             email: user.email,
+            username: user.username,
           },
         };
         const token = await promisify<TokenPayloadType, Secret, SignOptions>(

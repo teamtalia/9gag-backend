@@ -6,14 +6,12 @@ import Post from '../../models/Post';
 class ShufflePostService {
   public async execute(): Promise<Post> {
     const postRepository = getRepository(Post);
-    try {
-      const posts = await postRepository.find({
-        relations: ['file', 'tags', 'comments'],
-      });
-      return shuffle(posts)[0];
-    } catch (err) {
-      throw new ServiceError('Erro ao buscar uma postagem aleatória: ', err);
-    }
+    const posts = await postRepository.find({
+      relations: ['file', 'tags', 'comments'],
+    });
+    const post = shuffle(posts)[0];
+    if (!post) throw new ServiceError('Não existe postagens ainda!');
+    return post;
   }
 }
 

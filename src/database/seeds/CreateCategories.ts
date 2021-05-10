@@ -37,7 +37,7 @@ export default class CreateCategories implements Seeder {
         )
         .execute();
     } catch (e) {
-      console.log('Erro ao subir um seed:', e);
+      console.log('Erro ao subir um seed');
     }
   }
 }

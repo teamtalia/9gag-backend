@@ -8,6 +8,9 @@ import CreatePasswordResetService from '../services/user/CreatePasswordResetServ
 import UserVerficationService from '../services/user/UserVerficationService';
 import ThirdPartyCreateUserService from '../services/auth/ThirdPartyCreateUserService';
 import ResetUserPasswordService from '../services/user/ResetUserPasswordService';
+import UpdateUserProfileService from '../services/user/UpdateUserProfileService';
+import UpdateUserPasswordService from '../services/user/UpdateUserPasswordService';
+import UpdateUserAccountService from '../services/user/UpdateUserAccountService';
 
 const router = Router();
 
@@ -24,6 +27,109 @@ router.route('/').get(ensureAuthenticated, async (req, res) => {
         }),
       ),
     );
+  } catch (err) {
+    return res.status(500).json({
+      message: err,
+    });
+  }
+});
+router.put('/:username/profile', ensureAuthenticated, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { fullname, age, about, fileId } = req.body;
+    const { id: userId } = req.token.user;
+    const updateUserProfileService = new UpdateUserProfileService();
+    const user = await updateUserProfileService.execute({
+      fullname,
+      age,
+      about,
+      fileId,
+      username,
+      userId,
+    });
+    return res.status(200).json(
+      trim({
+        ...user,
+        password: undefined,
+        verificationCode: undefined,
+      }),
+    );
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+router.put('/:username/password', ensureAuthenticated, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { password, oldPassword } = req.body;
+    const { id: userId } = req.token.user;
+    const updateUserPasswordService = new UpdateUserPasswordService();
+
+    const user = await updateUserPasswordService.execute({
+      username,
+      userId,
+      password,
+      oldPassword,
+    });
+    return res.status(200).json(
+      trim({
+        ...user,
+        password: undefined,
+        verificationCode: undefined,
+      }),
+    );
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+router.put('/:username/account', ensureAuthenticated, async (req, res) => {
+  try {
+    const { username } = req.params;
+    const { newUsername } = req.body;
+    const { id: userId } = req.token.user;
+    const updateUserAccountService = new UpdateUserAccountService();
+
+    const user = await updateUserAccountService.execute({
+      username,
+      userId,
+      newUsername,
+    });
+    return res.status(200).json(
+      trim({
+        ...user,
+        password: undefined,
+        verificationCode: undefined,
+      }),
+    );
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
+});
+
+router.get('/me', ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.token.user;
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      relations: ['avatar'],
+      where: { id },
+    });
+    if (user) {
+      delete user.password;
+      delete user.verificationCode;
+      return res.status(200).json({
+        ...user,
+      });
+    }
+    return res.status(400).json({
+      message: 'Usuario não foi encontrado',
+    });
   } catch (err) {
     return res.status(500).json({
       message: err,

@@ -3,5 +3,6 @@ export default interface TokenPayloadType {
     id: string;
     fullname: string;
     email: string;
+    username: string;
   };
 }

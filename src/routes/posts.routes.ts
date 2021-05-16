@@ -130,7 +130,7 @@ router.get('/:id', async (req, res) => {
   const postRepository = getRepository(Post);
   const post = await postRepository.findOne({
     where: { id },
-    relations: ['file', 'tags', 'comments'],
+    relations: ['file', 'tags', 'comments', 'votes', 'votes.user'],
   });
   if (post) return res.json(post);
   return res.status(400).json({

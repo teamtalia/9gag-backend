@@ -7,7 +7,7 @@ interface Request {
   name: string;
 }
 
-class CreateTagService {
+class CreateCategoryService {
   public async execute({ name }: Request): Promise<Category> {
     const categoriesRepository = getRepository(Category);
 
@@ -34,4 +34,4 @@ class CreateTagService {
   }
 }
 
-export default CreateTagService;
+export default CreateCategoryService;

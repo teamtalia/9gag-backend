@@ -9,7 +9,7 @@ interface Request {
   text: string;
   userId: string;
   postId: string;
-  fileId: string;
+  fileId?: string;
   commentId: string;
 }
 
@@ -55,7 +55,7 @@ class ReplyCommentService {
       throw new ServiceError('Comentário inválida.', 400);
     }
 
-    if (!fileExists) {
+    if (fileId && !fileExists) {
       throw new ServiceError('Arquivo inválido.', 400);
     }
     if (commentExists.level + 1 > MAX_LEVEL_REPLIES) {

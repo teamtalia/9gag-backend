@@ -16,7 +16,14 @@ router.get('/:username/posts/my', async (req, res) => {
   const { username } = req.params;
   const user = await userRepository.findOne({
     where: { username },
-    relations: ['posts', 'posts.file', 'posts.tags', 'posts.comments'],
+    relations: [
+      'posts',
+      'posts.file',
+      'posts.tags',
+      'posts.comments',
+      'posts.votes',
+      'posts.votes.user',
+    ],
   });
   return res.json({
     posts: user.posts.map(el => ({ ...el, reason: 'Enviado' })),

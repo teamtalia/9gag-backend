@@ -23,7 +23,14 @@ class FetchHomeService {
     try {
       const user = await userRepository.findOne({
         where: { username },
-        relations: ['posts', 'posts.file', 'posts.tags', 'posts.comments'],
+        relations: [
+          'posts',
+          'posts.file',
+          'posts.tags',
+          'posts.comments',
+          'posts.votes',
+          'posts.votes.user',
+        ],
       });
       const postHadUploaded = user.posts.map(
         post => (({ post, reason: 'Enviado' } as unknown) as PostWithReason),

@@ -3,16 +3,23 @@ import { getManager, getRepository } from 'typeorm';
 import Category from '../models/Category';
 import Post from '../models/Post';
 import CreateCategoryService from '../services/posts/CreateCategoryService';
+import FetchCategoryService from '../services/posts/FetchCategoryService';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
   // precisa mudar para um serviço
-  const categoriesRepository = getRepository(Category);
-  const categories = await categoriesRepository.find({});
-  return res.json({
-    categories,
-  });
+  const fetchCategoryService = new FetchCategoryService();
+  try {
+    const categories = await fetchCategoryService.execute();
+    return res.status(201).json({
+      categories,
+    });
+  } catch (err) {
+    return res.status(err.status).json({
+      message: err.message,
+    });
+  }
 });
 
 router.get('/:categoryId/posts', async (req, res) => {

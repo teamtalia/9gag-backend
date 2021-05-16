@@ -53,6 +53,7 @@ router.get('/:id/comments', async (req, res) => {
       id: comment.user.id,
       fullname: comment.user.fullname,
       avatar: comment.user.avatar,
+      username: comment.user.username,
     } as unknown) as User;
     return comment;
   });

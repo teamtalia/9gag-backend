@@ -18,6 +18,9 @@ class FetchCommentedService {
         'comments.post',
         'comments.post.file',
         'comments.post.tags',
+        'comments.post.votes',
+        'comments.post.votes.user',
+        'comments.post.comments',
       ],
     });
     if (!userExists) {
@@ -27,7 +30,7 @@ class FetchCommentedService {
       .map(comment => comment.post)
       .filter((post, index, self) => {
         const findPost = self.findIndex(el => el.id === post.id);
-        return findPost && findPost === index;
+        return findPost !== -1 && findPost === index;
       })
       .sort((a, b) => {
         if (a.createdAt > b.createdAt) {
@@ -38,7 +41,6 @@ class FetchCommentedService {
         }
         return 0;
       });
-
     return posts;
   }
 }

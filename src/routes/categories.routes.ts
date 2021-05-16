@@ -22,14 +22,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:categoryId/posts', async (req, res) => {
-  const { categoryId } = req.params;
+router.get('/:slug/posts', async (req, res) => {
+  const { slug } = req.params;
 
   const categoriesRepository = getRepository(Category);
 
   const category = await categoriesRepository.findOne({
-    where: { id: categoryId },
-    relations: ['tags', 'tags.posts', 'tags.posts.file', 'tags.posts.comments'],
+    where: { slug },
+    relations: [
+      'tags',
+      'tags.posts',
+      'tags.posts.file',
+      'tags.posts.comments',
+      'tags.posts.votes',
+      'tags.posts.votes.user',
+    ],
   });
 
   if (!category) {
